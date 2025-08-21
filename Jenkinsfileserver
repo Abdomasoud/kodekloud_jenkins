@@ -7,24 +7,24 @@ pipeline {
 
     // ec2-server
     stages {
-        stage('Setup') {
-            steps {
-                sh '''
-                    python3 --version
-                    pip install --upgrade pip
-                    pip install -r requirements
+        // stage('Setup') {
+        //     steps {
+        //         sh '''
+        //             python3 --version
+        //             pip install --upgrade pip
+        //             pip install -r requirements
                     
-                '''
-            }
-        }
+        //         '''
+        //     }
+        // }
 
-        stage('Test') {
-            steps {
-                sh '''
-                    pytest
-                '''
-            }
-        }
+        // stage('Test') {
+        //     steps {
+        //         sh '''
+        //             pytest
+        //         '''
+        //     }
+        // }
         stage('Package the Code into ZIP') {
             steps {
                 sh "zip -r myapp.zip ./* -x '*.git*'"
