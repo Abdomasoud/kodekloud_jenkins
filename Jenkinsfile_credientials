@@ -1,11 +1,22 @@
 pipeline {
     agent any
     
+    environment {
+        DATABASE_CRED = credentials('database_cred')
+    }
+    
     stages {
         stage('Hello') {
             steps {
                 sh 'echo Hello World'
             }
+        }
+
+        stage('Connection to database test'){
+            sh '''
+                echo ${DATABASE_CRED}
+                echo {DATABASE_CRED_PSW}
+            '''
         }
     }
 }
