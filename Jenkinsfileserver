@@ -1,19 +1,17 @@
 pipeline {
     agent any
 
+    environment {
+        SERVER_IP = credentials('SERVER_IP')
+    }
+
     // ec2-server
     stages {
-        stage('Checkout') {
-            steps {
-                git url: 'https://github.com/Abdomasoud/kodekloud_jenkins', branch: 'main'
-            }
-        }
-
         stage('Setup') {
             steps {
                 sh '''
                     python3 --version
-                    pip install -r requirements
+                    pip3 install -r requirements
                     
                 '''
             }
@@ -26,6 +24,30 @@ pipeline {
                 '''
             }
         }
+        stage('Package the Code into ZIP') {
+            steps {
+                sh "zip -r myapp.zip ./* -x '*.git*'"
+                sh "ls -lart"
+            }
+        }
+
+        stage('Deploy to Prod') {
+            steps {
+                withCredentials([sshUserPrivateKey(credentialsId: 'ssh-key', keyFileVariable: 'MY_SSH_KEY', usernameVariable: 'username')]) {
+                    sh '''
+                    scp -i $MY_SSH_KEY -o StrictHostKeyChecking=no myapp.zip  ${username}@${SERVER_IP}:/home/ec2-user/
+                    ssh -i $MY_SSH_KEY -o StrictHostKeyChecking=no ${username}@${SERVER_IP} << EOF
+                        unzip -o /home/ec2-user/myapp.zip -d /home/ec2-user/app/
+                        source app/venv/bin/activate
+                        cd /home/ec2-user/app/
+                        pip install -r requirements.txt
+                        sudo systemctl restart flaskapp.service
+EOF
+                    '''
+                }
+            }
+        }
+
     }
 
 }
