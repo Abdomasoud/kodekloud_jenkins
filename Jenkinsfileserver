@@ -12,7 +12,9 @@ pipeline {
         stage('Setup') {
             steps {
                 sh '''
+                    python3 --version
                     pip install -r requirements
+                    
                 '''
             }
         }
