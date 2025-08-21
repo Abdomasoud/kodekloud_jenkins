@@ -12,13 +12,27 @@ pipeline {
             }
         }
 
+        stage('testing and linting'){
+            stages {
+                stage('testing'){
+                    steps {
+                        echo "testing............"
+                    }
+                }
+                stage('linting'){
+                    steps {
+                        echo "linting............"
+                    }
+                }
+            }
+        }
+
         stage('Connection to database test'){
             steps {
                 withCredentials([usernamePassword(credentialsId: 'database_cred', usernameVariable: 'myusername', passwordVariable:'mypassword')]){
                     echo "connection to database with these creds: username ${myusername}, password: ${mypassword}" 
 
                 }
-
             }
         }
     }
