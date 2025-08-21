@@ -1,9 +1,9 @@
 pipeline {
     agent any
     
-    environment {
-        DATABASE_CRED = credentials('database_cred')
-    }
+    // environment {
+    //     DATABASE_CRED = credentials('database_cred')
+    // }
     
     stages {
         stage('Hello') {
@@ -14,11 +14,11 @@ pipeline {
 
         stage('Connection to database test'){
             steps {
+                withCredentials([usernamePassword(credentialsId: 'database_cred', usernameVariable: 'myusername', passwordVariable:'mypassword')]){
+                    echo "connection to database with these creds: username ${myusername}, password: ${mypassword}" 
 
-            sh '''
-                echo ${DATABASE_CRED}
-                echo {DATABASE_CRED_PSW}
-            '''
+                }
+
             }
         }
     }
