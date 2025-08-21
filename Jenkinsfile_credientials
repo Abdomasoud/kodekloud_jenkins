@@ -13,7 +13,7 @@ pipeline {
         }
 
         stage('testing and linting'){
-            stages {
+            parallel {
                 stage('testing'){
                     steps {
                         echo "testing............"
